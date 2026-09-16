@@ -1,24 +1,20 @@
 import { Sequelize, DataTypes } from "sequelize";
-//database connection
 import dotenv from "dotenv";
 dotenv.config();
 
-const dbName = process.env.PGDATABASE;
-const dbUsername = process.env.PGUSER;
-const dbPassword = process.env.PGPASSWORD;
-const dbURL = process.env.GHOST_UNPOOLED;
-const PORT = process.env.PORT;
-const sequelize = new Sequelize(dbName, dbUsername, dbPassword, {
-  host: dbURL,
-  port: PORT,
+// สลับมาใช้ DATABASE_URL บรรทัดเดียว ชัวร์และเสถียรที่สุดสำหรับ Neon DB
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: "postgres",
   logging: false,
   dialectOptions: {
-    ssl: { require: true, rejectUnauthorized: false },
+    ssl: {
+      require: true,
+      rejectUnauthorized: false, // บังคับ SSL สำหรับ Neon DB
+    },
   },
 });
 
-//define database schema
+// define database schema
 const Product = sequelize.define("Product", {
   id: {
     type: DataTypes.INTEGER,
@@ -46,4 +42,5 @@ const connectDB = async () => {
     process.exit(1);
   }
 };
+
 export { sequelize, Product, connectDB };
