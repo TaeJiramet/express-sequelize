@@ -2,14 +2,20 @@ import { Sequelize, DataTypes } from "sequelize";
 import dotenv from "dotenv";
 dotenv.config();
 
-// สลับมาใช้ DATABASE_URL บรรทัดเดียว ชัวร์และเสถียรที่สุดสำหรับ Neon DB
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+// ดึงค่า DATABASE_URL และเช็กความถูกต้องตามที่อาจารย์แนะนำ
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL is required");
+}
+
+const sequelize = new Sequelize(databaseUrl, {
   dialect: "postgres",
   logging: false,
   dialectOptions: {
     ssl: {
       require: true,
-      rejectUnauthorized: false, // บังคับ SSL สำหรับ Neon DB
+      rejectUnauthorized: false,
     },
   },
 });
